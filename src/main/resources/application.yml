@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: Address
+  datasource:
+    url: jdbc:sql://localhost:3306/spr
+    username: root
+    password: Lion
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
