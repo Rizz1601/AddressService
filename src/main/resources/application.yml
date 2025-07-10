@@ -4,7 +4,7 @@ spring:
   application:
     name: Address
   datasource:
-    url: jdbc:sql://localhost:3306/spr
+    url: jdbc:mysql://localhost:3306/spr
     username: root
     password: Lion
     driver-class-name: com.mysql.cj.jdbc.Driver
