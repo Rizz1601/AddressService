@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,44 +21,57 @@ public class AddressController {
 			@Autowired
 			MyRepo repo;
 			@GetMapping("/address")
-			public List<Address> show()
+			public ResponseEntity<List<Address>> show()
 			{
-				return this.repo.findAll();
+				return ResponseEntity.ok(repo.findAll());
 			}
 			@PostMapping("/address")
-			public Address save(@RequestBody Address a)
+			public ResponseEntity<Address> save(@RequestBody Address a)
 			{
-				return this.repo.save(a);
+				 Address o=repo.save(a);
+				 if (o==null) {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+				} else {
+                     return ResponseEntity.status(HttpStatus.CREATED).build();
+				}
 			}
 			@DeleteMapping("/address/{hno}")
-			public String delete(@PathVariable("hno") int id)
+			public ResponseEntity<String> delete(@PathVariable("hno") int id)
 			{
-				repo.deleteById(id);
-				return "No Content";
+			 Optional<Address> a=repo.findById(id);
+			 if(a.isPresent())
+			 {
+				 repo.deleteById(id);
+				 return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Content");
+			 }else {
+				 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			 }
+				
 			}
 			@PutMapping("/address/{hno}")
-			public Address update(@RequestBody Address a,@PathVariable("hno") int id)
+			public ResponseEntity<Address> update(@RequestBody Address a,@PathVariable("hno") int id)
 			{
 				Optional<Address> o=repo.findById(id);
 				if(o.isPresent())
 				{
 					a.setHno(id);
-					return this.repo.save(a);
+					Address ad= repo.save(a);
+					return ResponseEntity.ok(ad);
 				}else {
-					return null;
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 				}
 			}
 			@GetMapping("/address/{hno}")
-			public List<Address> search(@PathVariable("hno") int id)
+			public ResponseEntity<List<Address>> search(@PathVariable("hno") int id)
 			{
 				Optional<Address> o=repo.findById(id);
 				if(o.isPresent())
 				{
 					
-					return this.repo.findAll();
+					return ResponseEntity.ok(repo.findAll());
 				}else
 				{
-					return null;
+					return ResponseEntity.status(HttpStatus.valueOf(404)).build();
 				}
 			}
 }
